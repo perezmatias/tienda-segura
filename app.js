@@ -10,3 +10,4 @@ app.get("/calcular", (req, res) => {
   res.json({ resultado });
 });
 module.exports = { app, total };
+app.listen(3000);

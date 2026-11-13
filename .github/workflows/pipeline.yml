@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with: { fetch-depth: 0}
+        with: { fetch-depth: 0 }
       - run: npm ci
       - run: npm test
       - run: npm audit --audit-level=high
@@ -17,3 +17,12 @@ jobs:
       - uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      # --- RETO 2: Trivy ---
+      - run: docker run --rm -v "$PWD":/src aquasec/trivy:latest config --exit-code 1 --severity HIGH,CRITICAL /src
+      
+      # --- RETO 3: OWASP ZAP (DAST) ---
+      - run: node app.js &
+      - uses: zaproxy/action-baseline@v0.12.0
+        with:
+          target: 'http://localhost:3000'
